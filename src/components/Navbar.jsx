@@ -1,6 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { isLoggedIn, getUser, logOut } from "../utils/auth";
 
 function Navbar() {
+    const navigate = useNaivgate()
+
+    const user = getUser()
+
+    function handleLogout() {
+        logOut()
+
+        navigate('/')
+    }
     return (
         <nav className="bg-green-600 text-white px-8 py-4 flex justify-between items-center">
             <Link to="/" className="text-xl font-bold">Football Stats Explorer</Link>
