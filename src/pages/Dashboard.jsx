@@ -10,6 +10,49 @@ function Dashboard() {
     const [loading, setLoading] = useState(true)
     const [selectedLeague, setSelectedLeague] = useState('')
 
+    function fetchMatches(pageNumber, leagueName) {
+        setLoading(true)
+
+        const leagueFilter = leagueName ? `, league "${leagueName}"` : ''
+
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query: `
+                query {
+                    matches(pageSize: 20, page: ${pageNumber}${leagueFilter})
+                    id
+                    date
+                    homeTeam { name }
+                    awayTeam { name }
+                    homeGoals
+                    awayGoals
+                    league { name }
+                }
+                `
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const newMatches = data.data.matches
+
+            if (pageNumber === 1) {
+                setMatches(newMatches)
+            } else {
+                setMatches(prev => [...prev, ...newMatches])
+            }
+
+            if(newMatches.length < 20) {
+                setHasMore(false)
+            } else {
+                setHasMore(true)
+            }
+
+            setLoading(false)
+        })
+    }
+
     useEffect(() => {
         fetch(API_URL, {
             method: 'POST',
