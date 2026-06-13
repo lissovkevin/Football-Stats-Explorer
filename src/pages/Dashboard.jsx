@@ -4,7 +4,11 @@ const API_URL = 'https://football-api-quza.onrender.com/graphql'
 
 function Dashboard() {
     const [leagues, setLeagues] = useState([])
+    const [matches, setMatches] = useState([])
+    const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] =useState(true)
     const [loading, setLoading] = useState(true)
+    const [selectedLeague, setSelectedLeague] = useState('')
 
     useEffect(() => {
         fetch(API_URL, {
