@@ -87,22 +87,62 @@ function Dashboard() {
         fetchMatches(1, newLeague)
     }
 
-    function loadMore() {
+    function handleLoadMore() {
         const nextPage = page + 1
         setPage(nextPage)
-        fetchMacthes(nextPage, selectedLeague)
+        fetchMatches(nextPage, selectedLeague)
     }
-    if (loading) return <p className='p-8'> Loading...</p>
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
-            <ul>
-                {leagues.map(league => (
-                    <li key={league.id} className='py-1 text-gray-700'>
-                        {league.name}
-                    </li>
+            <h1 className="text-3xl font-bold mb-6">Matches</h1>
+            {loading && <p className="text-gray-400 mb-4">Loading...</p>}
+            <div className="mb-6">
+                <select
+                    value={selectedLeague}
+                    onChange={handleLeagueChange}
+                    className="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs"
+                >
+                    <option value="">All leagues</option>
+
+                    {leagues.map(league => (
+                        <option key={league.id} value={league.name}>{league.name}</option>
+                    ))}
+                </select>
+            </div>
+
+            <div className="flex flex-col gap-3">
+                {matches.map(match => (
+                    <div key={match.id} className="bg-white border border-gray-300 rounded-lg p-4">
+                        <div className="text-xs text-green-600 font-medium mb-2">
+                            {match.league.name}
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="font-medium w-1/3">{match.homeTeam.name}</span>
+                            <div className='text-center'>
+                                <div className="text-xl font-bold">
+                                    {match.homeGoals ?? 0} — {match.awayGoals ?? 0}
+                                </div>
+                                <div className="text-xs text-gray-400 mt-1">{match.date}</div>
+                            </div>
+                            <span className="font-medium w-1/3 text-right">{match.awayTeam.name}</span>
+                        </div>
+                    </div>
                 ))}
-            </ul>
+            </div>
+            {loading && (
+                <p className="text-center text-gray-400 mt-6">Loading matches...</p>
+            )}
+            {!loading && hasMore && (
+                <button
+                    onClick={handleLoadMore}
+                    className="mt-6 w-full bg-green-600 text-white py-3 rounded-lg font-medium"
+                >
+                    Load more matches
+                </button>
+            )}
+            {!hasMore && (
+                <p className="text-center text-gray-400 mt-6">All matches loaded!</p>
+            )}
         </div>
     )
 }
