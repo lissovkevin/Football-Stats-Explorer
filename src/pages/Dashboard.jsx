@@ -79,6 +79,19 @@ function Dashboard() {
         fetchMatches(1, '')
     }, [])
 
+    function handleLeagueChange(e) {
+        const newLeague = e.target.value
+
+        setSelectedLeague(newLeague)
+        setPage(1)
+        fetchMatches(1, newLeague)
+    }
+
+    function loadMore() {
+        const nextPage = page + 1
+        setPage(nextPage)
+        fetchMacthes(nextPage, selectedLeague)
+    }
     if (loading) return <p className='p-8'> Loading...</p>
     return (
         <div className="p-8">
