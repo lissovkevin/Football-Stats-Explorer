@@ -37,8 +37,11 @@ function MatchDetail() {
             setMatch(data.data.match)
             setLoading(false)
         })
-    })
+    }, [id])
 
+    if (loading) return <p className="p-8">Loading...</p>
+    if (!match) return <p className="p-8">Match not found.</p>
+    
     return (
         <div className="p-8">
             <h1>Match detail</h1>
