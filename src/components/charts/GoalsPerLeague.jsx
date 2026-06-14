@@ -37,7 +37,7 @@ function GoalsPerLeague() {
         })
         .then(res => res.json())
         .then(data => {
-            const macthes = data.data.matches
+            const matches = data.data.matches
 
             const leagueGoals = matches.reduce((acc, match) => {
                 const league = match.league.name
@@ -73,9 +73,34 @@ function GoalsPerLeague() {
             setLoading(false)
         })
     }, [])
+
+    if (loading) return <p className="text-gray-400">Loading chart...</p>
+
     return (
-        <div>
-            <h2>Goals Per League</h2>
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-4">Average goals per league</h2>
+
+            <div style={{ height: '300px'}}>
+                <Bar
+                    data={chartData}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Average goals per match'
+                                }
+                            }
+                        }
+                    }}
+                />
+            </div>
         </div>
     )
 }
