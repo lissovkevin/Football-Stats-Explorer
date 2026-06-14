@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
 
@@ -9,6 +10,7 @@ function Dashboard() {
     const [hasMore, setHasMore] = useState(true)
     const [loading, setLoading] = useState(true)
     const [selectedLeague, setSelectedLeague] = useState('')
+    const navigate = useNavigate()
 
     function fetchMatches(pageNumber, leagueName) {
         setLoading(true)
@@ -111,7 +113,11 @@ function Dashboard() {
 
             <div className="flex flex-col gap-3">
                 {matches.map(match => (
-                    <div key={match.id} className="bg-white border border-gray-300 rounded-lg p-4">
+                    <div 
+                    key={match.id} 
+                    className="bg-white border border-gray-300 rounded-lg p-4"
+                    onClick={() => navigate(`/match/${match.id}`)}
+                    >
                         <div className="text-xs text-green-600 font-medium mb-2">
                             {match.league.name}
                         </div>
