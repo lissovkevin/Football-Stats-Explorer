@@ -13,7 +13,7 @@ function Dashboard() {
     function fetchMatches(pageNumber, leagueName) {
         setLoading(true)
 
-        const leagueFilter = leagueName ? `, league: "${leagueName}"` : ''
+        const leagueFilter = leagueName ? `, leagueId: ${leagueName}` : ''
 
         fetch(API_URL, {
             method: 'POST',
@@ -95,7 +95,6 @@ function Dashboard() {
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Matches</h1>
-            {loading && <p className="text-gray-400 mb-4">Loading...</p>}
             <div className="mb-6">
                 <select
                     value={selectedLeague}
@@ -105,7 +104,7 @@ function Dashboard() {
                     <option value="">All leagues</option>
 
                     {leagues.map(league => (
-                        <option key={league.id} value={league.name}>{league.name}</option>
+                        <option key={league.id} value={league.id}>{league.name}</option>
                     ))}
                 </select>
             </div>
