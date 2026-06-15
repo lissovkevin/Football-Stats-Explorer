@@ -1,4 +1,5 @@
 import GoalsPerLeague from '../components/charts/GoalsPerLeague'
+import WinsPerTeam from '../components/charts/WinsPerTeam'
 
 function Home() {
     return (
@@ -8,6 +9,7 @@ function Home() {
             {/* Charts section */}
             <div className="flex flex-col gap-8">
                 <GoalsPerLeague />
+                <WinsPerTeam />
             </div>
         </div>
     )
