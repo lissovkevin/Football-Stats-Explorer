@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { 
     Chart as ChartJS, 
@@ -15,7 +15,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
 
 function WinsPerTeam() {
-    const [chartData, setChartData] = useState=(null)
+    const [chartData, setChartData] = useState(null)
 
     const [loading, setLoading] = useState(true)
 
@@ -25,7 +25,7 @@ function WinsPerTeam() {
 
     useEffect(() => {
         fetch(API_URL, {
-            method: POST,
+            method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({
                 query: `
@@ -111,9 +111,47 @@ function WinsPerTeam() {
             })
     }, [selectedLeague])
 
+   if (loading) return <p className="text-gray-400">Loading chart...</p>
+
     return (
-        <div>
-            <h2>Wins per team</h2>
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-4">Top 10 wins per team</h2>
+
+            <div className="mb-4">
+                <select
+                    value={selectedLeague}
+                    onChange={e => setSelectedLeague(Number(e.target.value))}
+                    className="border border-gray-300 rounded-lg px-4 py-2"
+                >
+                    {leagues.map(league => (
+                        <option key={league.id} value={league.id}>
+                            {league.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div style={{ height: '300px' }}>
+                <Bar
+                    data={chartData}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of wins'
+                                }
+                            }
+                        }
+                    }}
+                />
+            </div>
         </div>
     )
 }
