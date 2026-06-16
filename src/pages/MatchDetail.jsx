@@ -88,7 +88,45 @@ function MatchDetail() {
       setEditing(true)
     }
 
-    
+    async function handleUpdate(){
+      const token = localStorage.getItem('jwt_token')
+
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          query: `
+            mutation {
+              updateMatch(
+                id: ${id},
+                homeGoals: ${editData.homeGoals},
+                awayGoals: ${editData.awayGoals},
+                date: "${editData.date}"
+              ) {
+                id
+                homeGoals
+                awayGoals
+                date
+                }
+            }
+          `
+        })
+      })
+
+      const data = await response.json()
+
+      if (data.data && data.data.updateMatch) {
+        setMatch(data.data.updateMatch)
+        setEditing(false)
+        alert('Match updated successfully')
+        windows.location.reload()
+      } else {
+        alert('Failed to update match. Please try again.')
+      }
+    }
 
     if (loading) return <p className="p-8">Loading...</p>
     if (!match) return <p className="p-8">Match not found.</p>
