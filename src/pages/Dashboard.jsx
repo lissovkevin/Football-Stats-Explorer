@@ -87,6 +87,7 @@ function Dashboard() {
 
         setSelectedLeague(newLeague)
         setPage(1)
+        setMatches([])
         fetchMatches(1, newLeague)
     }
 
