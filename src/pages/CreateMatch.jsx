@@ -1,4 +1,4 @@
-import { use, useEffect, useEffectEvent, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
