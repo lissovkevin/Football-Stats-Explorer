@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { isLoggedIn } from '../utils/auth'
 
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
 
@@ -97,6 +98,15 @@ function Dashboard() {
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Matches</h1>
+            {/* Only show create match button if the user is logged in */}
+            {isLoggedIn() && (
+                <button
+                    onClick={() => navigate('/create-match')}
+                    className="mb-6 bg-green-600 text-white px-6 py-2 rounded-lg font-medium"
+                >
+                    + Create match
+                </button>
+            )}
             <div className="mb-6">
                 <select
                     value={selectedLeague}
