@@ -79,6 +79,17 @@ function MatchDetail() {
         }
     }
 
+    function handleEdit() {
+      setEditData({
+        homeGoals: match.homeGoals ?? 0,
+        awayGoals: match.awayGoals ?? 0,
+        date: match.date
+      })
+      setEditing(true)
+    }
+
+    
+
     if (loading) return <p className="p-8">Loading...</p>
     if (!match) return <p className="p-8">Match not found.</p>
 
