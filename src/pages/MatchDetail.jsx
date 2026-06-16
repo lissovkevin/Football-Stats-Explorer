@@ -39,6 +39,40 @@ function MatchDetail() {
         })
     }, [id])
 
+    async function handleDelete() {
+      const confirmed = window.confirm('Are you sure you want to delete this match?')
+      if (!confirmed) return
+
+        const token = localStorage.getItem('jwt_token')
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            query: `
+              mutation {
+                deleteMatch(id: ${id}) {
+                  success
+                  message
+                }
+              }
+            `
+          })
+        })
+
+        const data = await response.json()
+
+        if (data.data && data.data.deleteMatch.success) {
+          alert('Match deleted successfully')
+          navigate('/dashboard')
+        } else {
+          alert('Failed to delete match. Please try again.')
+        }
+    }
+
     if (loading) return <p className="p-8">Loading...</p>
     if (!match) return <p className="p-8">Match not found.</p>
 
@@ -73,7 +107,7 @@ function MatchDetail() {
             <button className="flex-1 bg-green-600 text-white py-2 rounded-lg">
               Edit match
             </button>
-            <button className="flex-1 bg-red-500 text-white py-2 rounded-lg">
+            <button onClick={handleDelete} className="flex-1 bg-red-500 text-white py-2 rounded-lg">
               Delete match
             </button>
           </div>
