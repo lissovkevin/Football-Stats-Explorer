@@ -117,9 +117,45 @@ function GoalsScored() {
         })
     }, [selectedLeague])
 
+    if (loading) return <p className="text-gray-400"> Loading chart...</p>
     return (
-        <div>
-            <h2>Goals scored vs conceded</h2>
+        <div className="bg-white border border-gray-200 rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-4">Goals scored vs conceded — top 10 teams</h2>
+            <div className="mb-4">
+                <select
+                    value={selectedLeague}
+                    onChange={e => setSelectedLeague(Number(e.target.value))}
+                    className="border border-gray-300 rounded-lg px-4 py-2"
+                >
+                    {leagues.map(league => (
+                        <option key={league.id} value={league.id}>
+                            {league.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div style={{ height: '300px' }}>
+                <Bar
+                    data={chartData}
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' },
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of goals'
+                                }
+                            }
+                        }
+                    }}
+                />
+            </div>
         </div>
     )
 }
