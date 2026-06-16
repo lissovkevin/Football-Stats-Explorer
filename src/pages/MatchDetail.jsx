@@ -9,6 +9,12 @@ function MatchDetail() {
     const navigate = useNavigate()
     const [match, setMatch] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [editing, setEditing] = useState(false)
+    const [editData, setEditData] = useState({
+        homeGoals: 0,
+        awayGoals: 0,
+        date: '',
+    })
 
     useEffect(() => {
         fetch(API_URL, {
