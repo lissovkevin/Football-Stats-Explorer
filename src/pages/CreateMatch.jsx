@@ -116,112 +116,126 @@ function CreateMatch() {
     }
 
   return (
-          <div className="p-8 max-w-xl mx-auto">
+    <div className="bg-gray-50 min-h-screen p-8">
+      <div className="max-w-xl mx-auto">
+        <button onClick={() => navigate('/dashboard')} className="text-green-600 mb-6 flex items-center gap-1 hover:text-green-700">
+          ← Back to matches
+        </button>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Create match</h1>
+        {loading ? (
+          <p className="text-gray-400">Loading...</p>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm flex flex-col gap-5">
 
-          <button onClick={() => navigate('/dashboard')} className="text-green-600 mb-6 flex items-center gap-1">
-              ← Back to matches
-          </button>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                League
+              </label>
+              <select
+                value={formData.leagueId}
+                onChange={e => setFormData({ ...formData, leagueId: Number(e.target.value), homeTeamId: '', awayTeamId: '' })}
+                className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
+              >
+                <option value="">Select a league</option>
+                {leagues.map(league => (
+                  <option key={league.id} value={league.id}>{league.name}</option>
+                ))}
+              </select>
+            </div>
 
-          <h1 className="text-3xl font-bold mb-6">Create match</h1>
+            {teams.length > 0 && (
+              <>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Home team
+                  </label>
+                  <select
+                    value={formData.homeTeamId}
+                    onChange={e => setFormData({ ...formData, homeTeamId: Number(e.target.value) })}
+                    className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
+                  >
+                    <option value="">Select home team</option>
+                    {teams.map(team => (
+                      <option key={team.id} value={team.id}>{team.name}</option>
+                    ))}
+                  </select>
+                </div>
 
-          {loading ? (
-              <p className="text-gray-400">Loading...</p>
-          ) : (
-              <div className="bg-white border border-gray-200 rounded-xl p-8 flex flex-col gap-4">
-
-                  <div>
-                      <label className="text-sm text-gray-500">League</label>
-                      <select
-                          value={formData.leagueId}
-                          onChange={e => setFormData({ ...formData, leagueId: Number(e.target.value), homeTeamId: '', awayTeamId: '' })}
-                          className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                      >
-                          <option value="">Select a league</option>
-                          {leagues.map(league => (
-                              <option key={league.id} value={league.id}>{league.name}</option>
-                          ))}
-                      </select>
-                  </div>
-
-                  {teams.length > 0 && (
-                      <>
-                          <div>
-                              <label className="text-sm text-gray-500">Home team</label>
-                              <select
-                                  value={formData.homeTeamId}
-                                  onChange={e => setFormData({ ...formData, homeTeamId: Number(e.target.value) })}
-                                  className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                              >
-                                  <option value="">Select home team</option>
-                                  {teams.map(team => (
-                                      <option key={team.id} value={team.id}>{team.name}</option>
-                                  ))}
-                              </select>
-                          </div>
-                          <div>
-                              <label className="text-sm text-gray-500">Away team</label>
-                              <select
-                                  value={formData.awayTeamId}
-                                  onChange={e => setFormData({ ...formData, awayTeamId: Number(e.target.value) })}
-                                  className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                              >
-                                  <option value="">Select away team</option>
-                                  {teams.map(team => (
-                                      <option key={team.id} value={team.id}>{team.name}</option>
-                                  ))}
-                              </select>
-                          </div>
-                      </>
-                  )}
-
-                  <div>
-                      <label className="text-sm text-gray-500">Home goals</label>
-                      <input
-                          type="number"
-                          value={formData.homeGoals}
-                          onChange={e => setFormData({ ...formData, homeGoals: Number(e.target.value) })}
-                          className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                      />
-                  </div>
-
-                  <div>
-                      <label className="text-sm text-gray-500">Away goals</label>
-                      <input
-                          type="number"
-                          value={formData.awayGoals}
-                          onChange={e => setFormData({ ...formData, awayGoals: Number(e.target.value) })}
-                          className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                      />
-                  </div>
-
-                  <div>
-                      <label className="text-sm text-gray-500">Date (e.g. 31.12.2021)</label>
-                      <input
-                          type="text"
-                          value={formData.date}
-                          onChange={e => setFormData({ ...formData, date: e.target.value })}
-                          placeholder="DD.MM.YYYY"
-                          className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                      />
-                  </div>
-
-                  <div>
-                      <label className="text-sm text-gray-500">Season (e.g. 22)</label>
-                      <input
-                          type="text"
-                          value={formData.season}
-                          onChange={e => setFormData({ ...formData, season: e.target.value })}
-                          placeholder="22"
-                          className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
-                      />
-                  </div>
-
-                  <button onClick={handleSubmit} className="w-full bg-green-600 text-white py-3 rounded-lg font-medium mt-2">
-                      Create match
-                  </button>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Away team
+                  </label>
+                  <select
+                    value={formData.awayTeamId}
+                    onChange={e => setFormData({ ...formData, awayTeamId: Number(e.target.value) })}
+                    className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
+                  >
+                    <option value="">Select away team</option>
+                    {teams.map(team => (
+                      <option key={team.id} value={team.id}>{team.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Home goals
+                </label>
+                <input
+                  type="number"
+                  value={formData.homeGoals}
+                  onChange={e => setFormData({ ...formData, homeGoals: Number(e.target.value) })}
+                  className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                />
               </div>
-          )}
+              <div className="flex-1">
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Away goals
+                </label>
+                <input
+                  type="number"
+                  value={formData.awayGoals}
+                  onChange={e => setFormData({ ...formData, awayGoals: Number(e.target.value) })}
+                  className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                Date (e.g. 31.12.2021)
+              </label>
+              <input
+                type="text"
+                value={formData.date}
+                onChange={e => setFormData({ ...formData, date: e.target.value })}
+                placeholder="DD.MM.YYYY"
+                className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">
+                Season (e.g. 22)
+              </label>
+              <input
+                type="text"
+                value={formData.season}
+                onChange={e => setFormData({ ...formData, season: e.target.value })}
+                placeholder="22"
+                className="border border-gray-300 rounded-lg px-4 py-2 w-full"
+              />
+            </div>
+
+            <button onClick={handleSubmit} className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 mt-2">
+              Create match
+            </button>
+          </div>
+        )}
       </div>
+    </div>
   )
 }
 
