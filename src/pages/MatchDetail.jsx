@@ -122,7 +122,7 @@ function MatchDetail() {
         setMatch(data.data.updateMatch)
         setEditing(false)
         alert('Match updated successfully')
-        windows.location.reload()
+        window.location.reload()
       } else {
         alert('Failed to update match. Please try again.')
       }
@@ -157,16 +157,66 @@ function MatchDetail() {
           <p>Date: {match.date}</p>
           <p>Season: {match.season}</p>
         </div>
-        {isLoggedIn() && (
-          <div className="flex gap-3 mt-6">
-            <button className="flex-1 bg-green-600 text-white py-2 rounded-lg">
-              Edit match
-            </button>
-            <button onClick={handleDelete} className="flex-1 bg-red-500 text-white py-2 rounded-lg">
-              Delete match
-            </button>
-          </div>
-        )}
+          {isLoggedIn() && (
+            <div className="mt-6">
+              {editing ? (
+                <div className="flex flex-col gap-3">
+                  <h3 className="font-bold text-lg">Edit match</h3>
+                  <div>
+                    <label className="text-sm text-gray-500">
+                      {match.homeTeam.name} goals
+                    </label>
+                    <input
+                      type="number"
+                      value={editData.homeGoals}
+                      onChange={e => setEditData({ ...editData, homeGoals: Number(e.target.value) })}
+                      className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm text-gray-500">
+                      {match.awayTeam.name} goals
+                    </label>
+                    <input
+                      type="number"
+                      value={editData.awayGoals}
+                      onChange={e => setEditData({ ...editData, awayGoals: Number(e.target.value) })}
+                      className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm text-gray-500">Date</label>
+                    <input
+                      type="text"
+                      value={editData.date}
+                      onChange={e => setEditData({ ...editData, date: e.target.value })}
+                      className="border border-gray-300 rounded-lg px-4 py-2 w-full mt-1"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 mt-2">
+                    <button onClick={handleUpdate} className="flex-1 bg-green-600 text-white py-2 rounded-lg">
+                      Save changes
+                    </button>
+                    <button onClick={() => setEditing(false)} className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-3">
+                  <button onClick={handleEdit} className="flex-1 bg-green-600 text-white py-2 rounded-lg">
+                    Edit match
+                  </button>
+                  <button onClick={handleDelete}className="flex-1 bg-red-500 text-white py-2 rounded-lg">
+                    Delete match
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
       </div>
     </div>
     )
