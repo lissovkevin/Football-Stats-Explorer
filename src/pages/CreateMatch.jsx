@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useEffectEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
@@ -39,6 +39,39 @@ function CreateMatch() {
         setLoading(false)
     })
   }, [])
+
+    useEffect(() => {
+        if (!formData.leagueId) return
+
+        fetch(API_URL, {
+            mehod: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `
+                query {
+                    matches(pageSize: 100, page: 1, leagueId: ${formData.leagueId}) {
+                        homeTeam { id name }
+                        awayTeam { id name }
+                    }
+                }
+                `
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                const matches = data.data.matches
+
+                const teamMap = newMap()
+                matches.forEach(match => {
+                    teamMap.set(match.homeTeam.id, match.homeTeam.name)
+                    teamMap.set(match.awayTeam.id, match.awayTeam.name)
+                })
+
+                const uniqueTeams = Array.from(teamMap.values())
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                setTeams(uniqueTeams)
+            })
+    }, [formData.leagueId])
 
   return (
     <div className="p-8">
