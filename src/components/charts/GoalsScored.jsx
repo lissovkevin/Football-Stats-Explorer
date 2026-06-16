@@ -20,6 +20,25 @@ function GoalsScored() {
     const [selectedLeague, setSelectedLeague] = useState('1')
     const [leagues, setLeagues] = useState([])
 
+    useEffect(() => {
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `
+                query {
+                    leagues {
+                        id
+                        name
+                    }
+                }
+                `
+            })
+        })
+        .then(res => res.json())
+        .then(data => setLeagues(data.data.leagues))
+    }, [])
+
     return (
         <div>
             <h2>Goals scored vs conceded</h2>
