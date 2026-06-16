@@ -1,11 +1,60 @@
 import { GoogleLogin } from "@react-oauth/google"
 import { useNavigate } from "react-router-dom"
 
+const API_URL = 'https://football-api-quza.onrender.com/graphql'
+
 function Login() {
     const navigate = useNavigate()
 
-    function handleSuccess(response) {
+    async function handleSuccess(response) {
         localStorage.setItem('google_token', response.credential)
+
+        const payload = JSON.parse(atob(response.credential.split('.')[1]))
+        const email = payload.email
+        const googleId = payload.sub
+
+        const registerResponse = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `
+        mutation {
+          register(username: "${email}", password: "${googleId}") {
+            token
+          }
+        }
+      `
+            })
+        })
+
+        const registerData = await registerResponse.json()
+
+        if (registerData.data && registerData.data.register) {
+            localStorage.setItem('jwt_token', registerData.data.register.token)
+            navigate('/dashboard')
+            return
+        }
+
+        const loginResponse = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: `
+        mutation {
+          login(username: "${email}", password: "${googleId}") {
+            token
+          }
+        }
+      `
+            })
+        })
+
+        const loginData = await loginResponse.json()
+
+        if (loginData.data && loginData.data.login) {
+            localStorage.setItem('jwt_token', loginData.data.login.token)
+        }
+
         navigate('/dashboard')
     }
 
