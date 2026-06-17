@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Bar, Chart } from "react-chartjs-2";
+import { useEffect, useState } from 'react'
+import { Bar, Chart } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,7 +7,7 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -15,16 +15,16 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
 
 function GoalsPerLeague() {
-    const [chartData, setChartData] = useState(null)
+  const [chartData, setChartData] = useState(null)
 
-    const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query:`
+  useEffect(() => {
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `
                 query {
                     matches(pageSize: 500, page: 1) {
                         homeGoals
@@ -32,77 +32,78 @@ function GoalsPerLeague() {
                         league { name }
                     }
                 }
-                `
-            })
+                `,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const matches = data.data.matches
+
+        const leagueGoals = matches.reduce((acc, match) => {
+          const league = match.league.name
+
+          if (!acc[league]) {
+            acc[league] = { totalGoals: 0, matchCount: 0 }
+          }
+
+          acc[league].totalGoals +=
+            (match.homeGoals ?? 0) + (match.awayGoals ?? 0)
+          acc[league].matchCount += 1
+
+          return acc
+        }, {})
+
+        const leagues = Object.keys(leagueGoals)
+        const averages = leagues.map((league) => {
+          const { totalGoals, matchCount } = leagueGoals[league]
+          return (totalGoals / matchCount).toFixed(2)
         })
-        .then(res => res.json())
-        .then(data => {
-            const matches = data.data.matches
 
-            const leagueGoals = matches.reduce((acc, match) => {
-                const league = match.league.name
-
-                if (!acc[league]) {
-                    acc[league] = { totalGoals: 0, matchCount: 0 }
-                }
-
-                acc[league].totalGoals += (match.homeGoals ?? 0) + (match.awayGoals ?? 0)
-                acc[league].matchCount += 1
-
-                return acc
-            }, {})
-
-            const leagues = Object.keys(leagueGoals)
-            const averages = leagues.map(league => {
-                const { totalGoals, matchCount } = leagueGoals[league]
-                return (totalGoals / matchCount).toFixed(2)
-            })
-
-            setChartData({
-                labels: leagues,
-                datasets: [
-                    {
-                        label: 'Average Goals per Match',
-                        data: averages,
-                        backgroundColor: 'rgba(22, 163, 74, 0.7)',
-                        borderColor: 'rgba(22, 163, 74, 1)',
-                        borderWidth: 1,
-                    }
-                ]
-            })
-            setLoading(false)
+        setChartData({
+          labels: leagues,
+          datasets: [
+            {
+              label: 'Average Goals per Match',
+              data: averages,
+              backgroundColor: 'rgba(22, 163, 74, 0.7)',
+              borderColor: 'rgba(22, 163, 74, 1)',
+              borderWidth: 1,
+            },
+          ],
         })
-    }, [])
+        setLoading(false)
+      })
+  }, [])
 
-    if (loading) return <p className="text-gray-400">Loading chart...</p>
+  if (loading) return <p className="text-gray-400">Loading chart...</p>
 
-    return (
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
-            <h2 className="text-xl font-bold mb-4">Average goals per league</h2>
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-6">
+      <h2 className="text-xl font-bold mb-4">Average goals per league</h2>
 
-            <div style={{ height: '300px'}}>
-                <Bar
-                    data={chartData}
-                    options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'top' },
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Average goals per match'
-                                }
-                            }
-                        }
-                    }}
-                />
-            </div>
-        </div>
-    )
+      <div style={{ height: '300px' }}>
+        <Bar
+          data={chartData}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top' },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Average goals per match',
+                },
+              },
+            },
+          }}
+        />
+      </div>
+    </div>
+  )
 }
 
 export default GoalsPerLeague

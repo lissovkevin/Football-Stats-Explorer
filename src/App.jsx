@@ -11,9 +11,9 @@ function App() {
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />}/>
-        <Route path="/dashboard" element={<Dashboard />}/>
-        <Route path="/login" element={<Login />}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/match/:id" element={<MatchDetail />} />
         <Route path="/create-match" element={<CreateMatch />} />
       </Routes>

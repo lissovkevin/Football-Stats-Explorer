@@ -5,24 +5,24 @@ import { isLoggedIn } from '../utils/auth'
 const API_URL = 'https://football-api-quza.onrender.com/graphql'
 
 function Dashboard() {
-    const [leagues, setLeagues] = useState([])
-    const [matches, setMatches] = useState([])
-    const [page, setPage] = useState(1)
-    const [hasMore, setHasMore] = useState(true)
-    const [loading, setLoading] = useState(true)
-    const [selectedLeague, setSelectedLeague] = useState('')
-    const navigate = useNavigate()
+  const [leagues, setLeagues] = useState([])
+  const [matches, setMatches] = useState([])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [selectedLeague, setSelectedLeague] = useState('')
+  const navigate = useNavigate()
 
-    function fetchMatches(pageNumber, leagueName) {
-        setLoading(true)
+  function fetchMatches(pageNumber, leagueName) {
+    setLoading(true)
 
-        const leagueFilter = leagueName ? `, leagueId: ${leagueName}` : ''
+    const leagueFilter = leagueName ? `, leagueId: ${leagueName}` : ''
 
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query: `
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `
                 query {
                     matches(pageSize: 20, page: ${pageNumber}${leagueFilter}) {
                     id
@@ -34,76 +34,78 @@ function Dashboard() {
                     league { name }
                     }
                 }
-                `
-            })
-        })
-            .then(res => res.json())
-            .then(data => {
-                const newMatches = data.data.matches
+                `,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const newMatches = data.data.matches
 
-                if (pageNumber === 1) {
-                    setMatches(newMatches)
-                } else {
-                    setMatches(prev => [...prev, ...newMatches])
-                }
+        if (pageNumber === 1) {
+          setMatches(newMatches)
+        } else {
+          setMatches((prev) => [...prev, ...newMatches])
+        }
 
-                if (newMatches.length < 20) {
-                    setHasMore(false)
-                } else {
-                    setHasMore(true)
-                }
+        if (newMatches.length < 20) {
+          setHasMore(false)
+        } else {
+          setHasMore(true)
+        }
 
-                setLoading(false)
-            })
-    }
+        setLoading(false)
+      })
+  }
 
-    useEffect(() => {
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query: `
+  useEffect(() => {
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `
                 query {
                     leagues {
                         id
                         name
                     }
-                }`
-            })
-        })
-            .then(res => res.json())
-            .then(data => {
-                setLeagues(data.data.leagues)
-                setLoading(false)
-            })
-    }, [])
+                }`,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setLeagues(data.data.leagues)
+        setLoading(false)
+      })
+  }, [])
 
-    useEffect(() => {
-        fetchMatches(1, '')
-    }, [])
+  useEffect(() => {
+    fetchMatches(1, '')
+  }, [])
 
-    function handleLeagueChange(e) {
-        const newLeague = e.target.value
+  function handleLeagueChange(e) {
+    const newLeague = e.target.value
 
-        setSelectedLeague(newLeague)
-        setPage(1)
-        setMatches([])
-        fetchMatches(1, newLeague)
-    }
+    setSelectedLeague(newLeague)
+    setPage(1)
+    setMatches([])
+    fetchMatches(1, newLeague)
+  }
 
-    function handleLoadMore() {
-        const nextPage = page + 1
-        setPage(nextPage)
-        fetchMatches(nextPage, selectedLeague)
-    }
-    return (
+  function handleLoadMore() {
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchMatches(nextPage, selectedLeague)
+  }
+  return (
     <div className="bg-gray-50 min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
-
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Matches</h1>
           {isLoggedIn() && (
-            <button onClick={() => navigate('/create-match')} className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700">
+            <button
+              onClick={() => navigate('/create-match')}
+              className="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700"
+            >
               + Create match
             </button>
           )}
@@ -116,7 +118,7 @@ function Dashboard() {
             className="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs bg-white"
           >
             <option value="">All leagues</option>
-            {leagues.map(league => (
+            {leagues.map((league) => (
               <option key={league.id} value={league.id}>
                 {league.name}
               </option>
@@ -125,7 +127,7 @@ function Dashboard() {
         </div>
 
         <div className="flex flex-col gap-3">
-          {matches.map(match => (
+          {matches.map((match) => (
             <div
               key={match.id}
               onClick={() => navigate(`/match/${match.id}`)}
@@ -160,7 +162,10 @@ function Dashboard() {
         )}
 
         {!loading && hasMore && (
-          <button onClick={handleLoadMore} className="mt-6 w-full bg-white border border-gray-300 text-gray-600 py-3 rounded-xl font-medium hover:border-green-400 hover:text-green-600 transition-all">
+          <button
+            onClick={handleLoadMore}
+            className="mt-6 w-full bg-white border border-gray-300 text-gray-600 py-3 rounded-xl font-medium hover:border-green-400 hover:text-green-600 transition-all"
+          >
             Load more matches
           </button>
         )}

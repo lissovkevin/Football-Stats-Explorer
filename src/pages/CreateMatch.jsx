@@ -20,70 +20,74 @@ function CreateMatch() {
 
   useEffect(() => {
     fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            query: `
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `
             query {
                 leagues{
                     id
                     name
                 }
             }
-            `
-        })
+            `,
+      }),
     })
-    .then(res => res.json())
-    .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setLeagues(data.data.leagues)
         setLoading(false)
-    })
+      })
   }, [])
 
-    useEffect(() => {
-        if (!formData.leagueId) return
+  useEffect(() => {
+    if (!formData.leagueId) return
 
-        fetch(API_URL, {            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                query: `
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: `
                 query {
                     matches(pageSize: 100, page: 1, leagueId: ${formData.leagueId}) {
                         homeTeam { id name }
                         awayTeam { id name }
                     }
                 }
-                `
-            })
+                `,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const matches = data.data.matches
+
+        const teamMap = new Map()
+        matches.forEach((match) => {
+          teamMap.set(match.homeTeam.id, match.homeTeam)
+          teamMap.set(match.awayTeam.id, match.awayTeam)
         })
-            .then(res => res.json())
-            .then(data => {
-                const matches = data.data.matches
 
-                const teamMap = new Map()
-                matches.forEach(match => {
-                    teamMap.set(match.homeTeam.id, match.homeTeam)
-                    teamMap.set(match.awayTeam.id, match.awayTeam)
-                })
+        const uniqueTeams = Array.from(teamMap.values()).filter(
+          (team) => team && team.name
+        )
+        const sortedTeams = uniqueTeams.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+        setTeams(uniqueTeams)
+      })
+  }, [formData.leagueId])
 
-                const uniqueTeams = Array.from(teamMap.values())
-                    .filter(team => team && team.name)
-                    const sortedTeams = uniqueTeams.sort((a, b) => a.name.localeCompare(b.name))
-                setTeams(uniqueTeams)
-            })
-    }, [formData.leagueId])
+  async function handleSubmit() {
+    const token = localStorage.getItem('jwt_token')
 
-    async function handleSubmit() {
-        const token = localStorage.getItem('jwt_token')
-
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization' : `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                query: `
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        query: `
                     mutation {
                         createMatch(
                             date: "${formData.date}"
@@ -100,25 +104,28 @@ function CreateMatch() {
                             awayTeam { name }
                         }
                     }
-                `
-            })
-        })
+                `,
+      }),
+    })
 
-        const data = await response.json()
+    const data = await response.json()
 
-        if (data.data && data.data.createMatch) {
-            alert('Match created successfully')
-            navigate(`/match/${data.data.createMatch.id}`)
-        } else {
-            alert('Failed to create match. Please try again.')
-            console.log(data.errors)
-        }
+    if (data.data && data.data.createMatch) {
+      alert('Match created successfully')
+      navigate(`/match/${data.data.createMatch.id}`)
+    } else {
+      alert('Failed to create match. Please try again.')
+      console.log(data.errors)
     }
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen p-8">
       <div className="max-w-xl mx-auto">
-        <button onClick={() => navigate('/dashboard')} className="text-green-600 mb-6 flex items-center gap-1 hover:text-green-700">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="text-green-600 mb-6 flex items-center gap-1 hover:text-green-700"
+        >
           ← Back to matches
         </button>
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Create match</h1>
@@ -126,19 +133,27 @@ function CreateMatch() {
           <p className="text-gray-400">Loading...</p>
         ) : (
           <div className="bg-white border border-gray-200 rounded-xl p-8 shadow-sm flex flex-col gap-5">
-
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1 block">
                 League
               </label>
               <select
                 value={formData.leagueId}
-                onChange={e => setFormData({ ...formData, leagueId: Number(e.target.value), homeTeamId: '', awayTeamId: '' })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    leagueId: Number(e.target.value),
+                    homeTeamId: '',
+                    awayTeamId: '',
+                  })
+                }
                 className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
               >
                 <option value="">Select a league</option>
-                {leagues.map(league => (
-                  <option key={league.id} value={league.id}>{league.name}</option>
+                {leagues.map((league) => (
+                  <option key={league.id} value={league.id}>
+                    {league.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -151,12 +166,19 @@ function CreateMatch() {
                   </label>
                   <select
                     value={formData.homeTeamId}
-                    onChange={e => setFormData({ ...formData, homeTeamId: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        homeTeamId: Number(e.target.value),
+                      })
+                    }
                     className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
                   >
                     <option value="">Select home team</option>
-                    {teams.map(team => (
-                      <option key={team.id} value={team.id}>{team.name}</option>
+                    {teams.map((team) => (
+                      <option key={team.id} value={team.id}>
+                        {team.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -167,12 +189,19 @@ function CreateMatch() {
                   </label>
                   <select
                     value={formData.awayTeamId}
-                    onChange={e => setFormData({ ...formData, awayTeamId: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        awayTeamId: Number(e.target.value),
+                      })
+                    }
                     className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
                   >
                     <option value="">Select away team</option>
-                    {teams.map(team => (
-                      <option key={team.id} value={team.id}>{team.name}</option>
+                    {teams.map((team) => (
+                      <option key={team.id} value={team.id}>
+                        {team.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -186,7 +215,12 @@ function CreateMatch() {
                 <input
                   type="number"
                   value={formData.homeGoals}
-                  onChange={e => setFormData({ ...formData, homeGoals: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      homeGoals: Number(e.target.value),
+                    })
+                  }
                   className="border border-gray-300 rounded-lg px-4 py-2 w-full"
                 />
               </div>
@@ -197,7 +231,12 @@ function CreateMatch() {
                 <input
                   type="number"
                   value={formData.awayGoals}
-                  onChange={e => setFormData({ ...formData, awayGoals: Number(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      awayGoals: Number(e.target.value),
+                    })
+                  }
                   className="border border-gray-300 rounded-lg px-4 py-2 w-full"
                 />
               </div>
@@ -210,7 +249,9 @@ function CreateMatch() {
               <input
                 type="text"
                 value={formData.date}
-                onChange={e => setFormData({ ...formData, date: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, date: e.target.value })
+                }
                 placeholder="DD.MM.YYYY"
                 className="border border-gray-300 rounded-lg px-4 py-2 w-full"
               />
@@ -223,13 +264,18 @@ function CreateMatch() {
               <input
                 type="text"
                 value={formData.season}
-                onChange={e => setFormData({ ...formData, season: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, season: e.target.value })
+                }
                 placeholder="22"
                 className="border border-gray-300 rounded-lg px-4 py-2 w-full"
               />
             </div>
 
-            <button onClick={handleSubmit} className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 mt-2">
+            <button
+              onClick={handleSubmit}
+              className="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 mt-2"
+            >
               Create match
             </button>
           </div>

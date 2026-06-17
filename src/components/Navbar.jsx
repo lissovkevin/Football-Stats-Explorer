@@ -14,8 +14,10 @@ function Navbar() {
   return (
     <nav className="bg-green-600 text-white px-8 py-4 shadow-md">
       <div className="max-w-5xl mx-auto flex justify-between items-center">
-
-        <Link to="/" className="text-xl font-bold tracking-tight hover:text-green-100">
+        <Link
+          to="/"
+          className="text-xl font-bold tracking-tight hover:text-green-100"
+        >
           Football Stats Explorer
         </Link>
 
@@ -32,12 +34,18 @@ function Navbar() {
               <span className="text-green-200 text-sm">
                 Hi, {user.name.split(' ')[0]}
               </span>
-              <button onClick={handleLogout} className="bg-white text-green-600 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-green-50">
+              <button
+                onClick={handleLogout}
+                className="bg-white text-green-600 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-green-50"
+              >
                 Logout
               </button>
             </div>
           ) : (
-            <Link to="/login" className="bg-white text-green-600 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-green-50">
+            <Link
+              to="/login"
+              className="bg-white text-green-600 px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-green-50"
+            >
               Login
             </Link>
           )}

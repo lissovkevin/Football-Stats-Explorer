@@ -9,9 +9,13 @@ function Home() {
       <div className="bg-green-600 text-white px-8 py-16 text-center">
         <h1 className="text-4xl font-bold mb-3">Football Stats Explorer</h1>
         <p className="text-green-100 text-lg mb-8 max-w-xl mx-auto">
-          Explore match results, goals, and team performance across 18 European leagues.
+          Explore match results, goals, and team performance across 18 European
+          leagues.
         </p>
-        <Link　to="/dashboard"　className="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50">
+        <Link
+          to="/dashboard"
+          className="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-green-50"
+        >
           Browse matches →
         </Link>
       </div>
