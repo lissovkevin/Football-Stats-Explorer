@@ -198,11 +198,13 @@ function CreateMatch() {
                     className="border border-gray-300 rounded-lg px-4 py-2 w-full bg-white"
                   >
                     <option value="">Select away team</option>
-                    {teams.map((team) => (
-                      <option key={team.id} value={team.id}>
-                        {team.name}
-                      </option>
-                    ))}
+                    {teams
+                      .filter((team) => team.id !== formData.homeTeamId)
+                      .map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               </>

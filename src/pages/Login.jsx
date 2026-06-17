@@ -70,7 +70,7 @@ function Login() {
           Sign in to unlock edit and delete features
         </p>
         <div className="flex justify-center">
-          <GoogleLogin onSuccess={handleSuccess} onError={handleError}/>
+          <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
         </div>
       </div>
     </div>
